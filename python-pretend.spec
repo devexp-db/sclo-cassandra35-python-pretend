@@ -1,11 +1,25 @@
-%global with_python3 1
+# needed for epel6
+%if 0%{?rhel} && 0%{?rhel} <= 6
+%{!?__python2: %global __python2 /usr/bin/python2}
+%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%endif
+
+# enable python3 on fedora
+%if 0%{?fedora}
+%bcond_without python3
+%else
+%bcond_with python3
+%endif
+
 %global srcname pretend
 
 Name:           python-pretend
 Version:        1.0.8
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A library for stubbing in Python
 
+Group:          Development/Libraries
 License:        BSD
 URL:            https://github.com/alex/pretend
 Source0:        https://pypi.python.org/packages/source/p/%{srcname}/%{srcname}-%{version}.tar.gz
@@ -14,7 +28,7 @@ BuildArch:      noarch
 
 BuildRequires:  python-devel
 BuildRequires:  python-setuptools
-%if 0%{?with_python3}
+%if %{with python3}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 %endif
@@ -24,7 +38,7 @@ BuildRequires:  python3-setuptools
 Pretend is a library to make stubbing with Python easier.
 
 
-%if 0%{?with_python3}
+%if %{with python3}
 %package -n python3-pretend
 Summary:        A library for stubbing in Python
 License:        BSD
@@ -41,7 +55,7 @@ Pretend is a library to make stubbing with Python easier.
 # Delete upstream supplied egg-info
 rm -rf *.egg-info
 
-%if 0%{?with_python3}
+%if %{with python3}
 rm -rf %{py3dir}
 cp -a . %{py3dir}
 %endif
@@ -50,7 +64,7 @@ cp -a . %{py3dir}
 %build
 %{__python2} setup.py build
 
-%if 0%{?with_python3}
+%if %{with python3}
 pushd %{py3dir}
 %{__python3} setup.py build
 popd
@@ -58,7 +72,7 @@ popd
 
 
 %install
-%if 0%{?with_python3}
+%if %{with python3}
 pushd %{py3dir}
 %{__python3} setup.py install -O1 --skip-build --root %{buildroot}
 popd
@@ -72,7 +86,7 @@ popd
 %{python2_sitelib}/pretend.py*
 %{python2_sitelib}/pretend-%{version}-py2.?.egg-info
 
-%if 0%{?with_python3}
+%if %{with python3}
 %files -n python3-pretend
 %doc PKG-INFO README.rst LICENSE.rst
 %{python3_sitelib}/pretend.py
@@ -82,5 +96,8 @@ popd
 
 
 %changelog
+* Sat Nov 22 2014 Piotr Popieluch <piotr1212@gmail.com> - 1.0.8-2
+- Added epel support
+
 * Mon Oct 20 2014 Piotr Popieluch <piotr1212@gmail.com> - 1.0.8-1
 - Initial package
