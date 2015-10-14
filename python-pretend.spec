@@ -16,7 +16,7 @@
 
 Name:           python-pretend
 Version:        1.0.8
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A library for stubbing in Python
 
 Group:          Development/Libraries
@@ -90,12 +90,16 @@ popd
 %files -n python3-pretend
 %doc PKG-INFO README.rst LICENSE.rst
 %{python3_sitelib}/pretend.py
-%{python3_sitelib}/__pycache__/pretend.cpython-3?.py*
+%{python3_sitelib}/__pycache__/pretend.cpython-3?*
 %{python3_sitelib}/pretend-%{version}-py3.?.egg-info
 %endif
 
 
 %changelog
+* Wed Oct 14 2015 Robert Kuska <rkuska@redhat.com> - 1.0.8-4
+- Rebuilt for Python3.5 rebuild
+- Change pattern for listed files under __pycache__ folder to follow new naming of bytecompiled files
+
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.8-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
