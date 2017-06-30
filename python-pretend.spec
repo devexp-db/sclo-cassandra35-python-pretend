@@ -1,10 +1,3 @@
-# needed for epel6
-%if 0%{?rhel} && 0%{?rhel} <= 6
-%{!?__python2: %global __python2 /usr/bin/python2}
-%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-%endif
-
 # enable python3 on fedora
 %if 0%{?fedora}
 %bcond_without python3
@@ -16,7 +9,7 @@
 
 Name:           python-pretend
 Version:        1.0.8
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        A library for stubbing in Python
 
 Group:          Development/Libraries
@@ -26,8 +19,8 @@ Source0:        https://pypi.python.org/packages/source/p/%{srcname}/%{srcname}-
 
 BuildArch:      noarch
 
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
+BuildRequires:  python2-devel
+BuildRequires:  python2-setuptools
 %if %{with python3}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
@@ -38,10 +31,21 @@ BuildRequires:  python3-setuptools
 Pretend is a library to make stubbing with Python easier.
 
 
+%package -n python2-pretend
+Summary:        A library for stubbing in Python
+License:        BSD
+%{?python_provide:%python_provide python2-%{srcname}}
+
+
+%description -n python2-pretend
+Pretend is a library to make stubbing with Python easier.
+
+
 %if %{with python3}
 %package -n python3-pretend
 Summary:        A library for stubbing in Python
 License:        BSD
+%{?python_provide:%python_provide python3-%{srcname}}
 
 
 %description -n python3-pretend
@@ -50,45 +54,35 @@ Pretend is a library to make stubbing with Python easier.
 
 
 %prep
-%setup -q -n %{srcname}-%{version}
-
-# Delete upstream supplied egg-info
-rm -rf *.egg-info
-
-%if %{with python3}
-rm -rf %{py3dir}
-cp -a . %{py3dir}
-%endif
+%autosetup -n %{srcname}-%{version}
 
 
 %build
-%{__python2} setup.py build
+%py2_build
 
 %if %{with python3}
-pushd %{py3dir}
-%{__python3} setup.py build
-popd
+%py3_build
 %endif
 
 
 %install
+%py2_install
+
 %if %{with python3}
-pushd %{py3dir}
-%{__python3} setup.py install -O1 --skip-build --root %{buildroot}
-popd
+%py3_install
 %endif
 
-%{__python2} setup.py install -O1 --skip-build --root %{buildroot}
 
-
-%files
-%doc PKG-INFO README.rst LICENSE.rst
+%files -n python2-pretend
+%doc PKG-INFO README.rst
+%license LICENSE.rst
 %{python2_sitelib}/pretend.py*
 %{python2_sitelib}/pretend-%{version}-py2.?.egg-info
 
 %if %{with python3}
 %files -n python3-pretend
-%doc PKG-INFO README.rst LICENSE.rst
+%doc PKG-INFO README.rst
+%license LICENSE.rst
 %{python3_sitelib}/pretend.py
 %{python3_sitelib}/__pycache__/pretend.cpython-3?*
 %{python3_sitelib}/pretend-%{version}-py3.?.egg-info
@@ -96,6 +90,9 @@ popd
 
 
 %changelog
+* Fri Jun 30 2017 Piotr Popieluch <piotr1212@gmail.com> - 1.0.8-9
+- Update to new package guidelines
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.8-8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
