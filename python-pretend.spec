@@ -9,7 +9,7 @@
 
 Name:           python-pretend
 Version:        1.0.8
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        A library for stubbing in Python
 
 Group:          Development/Libraries
@@ -90,6 +90,9 @@ Pretend is a library to make stubbing with Python easier.
 
 
 %changelog
+* Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.8-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Fri Jun 30 2017 Piotr Popieluch <piotr1212@gmail.com> - 1.0.8-9
 - Update to new package guidelines
 
