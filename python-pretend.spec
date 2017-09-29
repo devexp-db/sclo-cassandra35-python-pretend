@@ -1,5 +1,4 @@
-# enable python3 on fedora
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 %bcond_without python3
 %else
 %bcond_with python3
@@ -9,7 +8,7 @@
 
 Name:           python-pretend
 Version:        1.0.8
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        A library for stubbing in Python
 
 Group:          Development/Libraries
@@ -90,6 +89,9 @@ Pretend is a library to make stubbing with Python easier.
 
 
 %changelog
+* Fri Sep 29 2017 Troy Dawson <tdawson@redhat.com> - 1.0.8-11
+- Cleanup spec file conditionals
+
 * Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.8-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 
