@@ -1,3 +1,6 @@
+%{?scl:%scl_package python-pretend}
+%{!?scl:%global pkg_name %{name}}
+
 %if 0%{?fedora} || 0%{?rhel} > 7
 %bcond_without python3
 %else
@@ -6,9 +9,9 @@
 
 %global srcname pretend
 
-Name:           python-pretend
+Name:           %{?scl_prefix}python-pretend
 Version:        1.0.8
-Release:        11%{?dist}
+Release:        12%{?dist}
 Summary:        A library for stubbing in Python
 
 Group:          Development/Libraries
@@ -30,24 +33,24 @@ BuildRequires:  python3-setuptools
 Pretend is a library to make stubbing with Python easier.
 
 
-%package -n python2-pretend
+%package -n %{?scl_prefix}python2-pretend
 Summary:        A library for stubbing in Python
 License:        BSD
-%{?python_provide:%python_provide python2-%{srcname}}
+%{!?scl:%{?python_provide:%python_provide python2-%{srcname}}}
 
 
-%description -n python2-pretend
+%description -n %{?scl_prefix}python2-pretend
 Pretend is a library to make stubbing with Python easier.
 
 
 %if %{with python3}
-%package -n python3-pretend
+%package -n %{?scl_prefix}python3-pretend
 Summary:        A library for stubbing in Python
 License:        BSD
-%{?python_provide:%python_provide python3-%{srcname}}
+%{!?scl:%{?python_provide:%python_provide python3-%{srcname}}}
 
 
-%description -n python3-pretend
+%description -n %{?scl_prefix}python3-pretend
 Pretend is a library to make stubbing with Python easier.
 %endif
 
@@ -57,29 +60,33 @@ Pretend is a library to make stubbing with Python easier.
 
 
 %build
+%{?scl:scl enable %{scl} - << "EOF"}
 %py2_build
 
 %if %{with python3}
 %py3_build
 %endif
+%{?scl:EOF}
 
 
 %install
-%py2_install
+%{?scl:scl enable %{scl} - << "EOF"}
+%{py2_install -- --prefix %{?_prefix}}
 
 %if %{with python3}
-%py3_install
+%{py3_install -- --prefix %{?_prefix}}
 %endif
+%{?scl:EOF}
 
 
-%files -n python2-pretend
+%files -n %{?scl_prefix}python2-pretend
 %doc PKG-INFO README.rst
 %license LICENSE.rst
 %{python2_sitelib}/pretend.py*
 %{python2_sitelib}/pretend-%{version}-py2.?.egg-info
 
 %if %{with python3}
-%files -n python3-pretend
+%files -n %{?scl_prefix}python3-pretend
 %doc PKG-INFO README.rst
 %license LICENSE.rst
 %{python3_sitelib}/pretend.py
@@ -89,6 +96,9 @@ Pretend is a library to make stubbing with Python easier.
 
 
 %changelog
+* Tue Oct 03 2017 Augusto Mecking Caringi <acaringi@redhat.com> - 1.0.8-12
+- scl conversion
+
 * Fri Sep 29 2017 Troy Dawson <tdawson@redhat.com> - 1.0.8-11
 - Cleanup spec file conditionals
 
